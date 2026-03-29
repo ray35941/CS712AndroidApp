@@ -29,7 +29,7 @@ class SecondActivity : AppCompatActivity() {
             challenges
         )
 
-        // Return to main: simplest is finish() to go back
+
         btnMain.setOnClickListener {
             finish()
         }
