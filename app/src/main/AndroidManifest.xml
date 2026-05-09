@@ -5,7 +5,12 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
-
+    <uses-permission android:name="com.example.csci712assignment2bykaiding.MSE712" />
+    <permission
+        android:name="com.example.csci712assignment2bykaiding.MSE712"
+        android:label="MSE712"
+        android:description="@string/mse712_description"
+        android:protectionLevel="dangerous" />
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -26,7 +31,8 @@
 
         <activity
             android:name=".SecondActivity"
-            android:exported="false">
+            android:exported="true"
+            android:permission="com.example.csci712assignment2bykaiding.MSE712">
             <intent-filter>
                 <action android:name="com.example.csci712assignment2bykaiding.OPEN_SECOND" />
 

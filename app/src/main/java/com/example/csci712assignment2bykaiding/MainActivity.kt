@@ -1,5 +1,8 @@
 package com.example.csci712assignment2bykaiding
 
+import android.content.pm.PackageManager
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
@@ -16,14 +19,30 @@ class MainActivity : AppCompatActivity() {
 
         const val ACTION_MY_ACTION = "com.example.MY_ACTION"
     }
-
+    private val mse712Permission = "com.example.csci712assignment2bykaiding.MSE712"
+    private val permissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                Toast.makeText(
+                    this,
+                    "Permission granted.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                Toast.makeText(
+                    this,
+                    "Permission not granted.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     private val receiver = MyBroadcastReceiver()
     private var receiverRegistered = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        requestMse712Permission()
 
         val btnExplicit = findViewById<Button>(R.id.btnExplicit)
         val btnImplicit = findViewById<Button>(R.id.btnImplicit)
@@ -37,21 +56,20 @@ class MainActivity : AppCompatActivity() {
 
 
         btnExplicit.setOnClickListener {
-            val intent = Intent(this, SecondActivity::class.java)
-            startActivity(intent)
+
+            checkPermissionAndOpenSecondExplicit()
         }
 
 
         btnImplicit.setOnClickListener {
-            val intent = Intent(ACTION_OPEN_SECOND)
-            intent.setPackage(packageName)
-            startActivity(intent)
+            checkPermissionAndOpenSecondImplicit()
         }
 
 
         btnStartService.setOnClickListener {
             val serviceIntent = Intent(this, MyForegroundService::class.java)
             ContextCompat.startForegroundService(this, serviceIntent)
+
         }
 
 
@@ -67,6 +85,44 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, ThirdActivity::class.java)
             startActivity(intent)
         }
+    }
+    private fun requestMse712Permission() {
+        if (ContextCompat.checkSelfPermission(this, mse712Permission)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            permissionLauncher.launch(mse712Permission)
+        }
+    }
+
+    private fun checkPermissionAndOpenSecondExplicit() {
+        if (ContextCompat.checkSelfPermission(this, mse712Permission)
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+            openSecondActivityExplicit()
+        } else {
+            permissionLauncher.launch(mse712Permission)
+        }
+    }
+
+    private fun checkPermissionAndOpenSecondImplicit() {
+        if (ContextCompat.checkSelfPermission(this, mse712Permission)
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+            openSecondActivityImplicit()
+        } else {
+            permissionLauncher.launch(mse712Permission)
+        }
+    }
+
+    private fun openSecondActivityExplicit() {
+        val intent = Intent(this, SecondActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun openSecondActivityImplicit() {
+        val intent = Intent(ACTION_OPEN_SECOND)
+        intent.setPackage(packageName)
+        startActivity(intent)
     }
 
     override fun onStart() {
